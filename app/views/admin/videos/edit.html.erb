@@ -1,0 +1,28 @@
+<%= render :partial => 'admin/shared/product_sub_menu' %>
+
+<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Videos"} %>
+
+<%= error_messages_for :video %>
+
+<% form_for(:video, :url => admin_product_video_url(@product), :html => { :method => :put, :multipart => true }) do |f| %>
+  <table class="basic-table">
+    <tr>
+      <td><%= t("video") %>:</td>
+      <% unless @video.image? %>
+        <%  width, height = flash_dimensions(@video.attachment.path) %>
+        <td><%= flashembed(:product_video, @video.attachment.url, width, height) %></td>
+      <% else %>
+        <td><%= image_tag(@video.attachment.url(:mini)) %></td>
+      <% end %>
+    </tr>
+    <tr>
+      <td></td>
+      <td><%= @video.attachment_file_name %></td>
+    </tr>
+    <%= render :partial => "form", :locals => { :f => f } %>
+  </table>
+  <p class="form-buttons">
+    <%= button t("update") %>
+    or <%= link_to t("cancel"), admin_product_videos_url(@product), :id => "cancel_link" %>
+  </p>
+<% end %>

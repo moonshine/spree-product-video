@@ -1,0 +1,70 @@
+<%= render :partial => 'admin/shared/product_sub_menu' %>
+
+<%= render :partial => 'admin/shared/product_tabs', :locals => {:current => "Videos"} %>
+
+<table class="index">
+  <tr>
+    <th><%= t("filename") %></th>
+    <% if @product.has_variants? %>
+      <th><%= Variant.human_name %></th>
+    <% end %>
+    <th><%= t("alt_text") %></th>
+    <th><%= t("action") %></th>
+  </tr>
+
+  <% @product.videos.each do |video| %>
+    <tr id="<%= dom_id(video) %>">
+      <% unless video.image? %>
+        <td><%= link_to video.attachment_file_name, edit_admin_product_video_url(@product, video) %></td>
+      <% else %>
+        <td><%= image_tag(video.attachment.url(:mini)) %></td>
+      <% end %>
+      <% if @product.has_variants? %>
+        <td><%= t('all') %></td>
+      <% end %>
+      <td><%= video.alt %></td>
+      <td class="actions">
+        <%= link_to_with_icon('edit', t("edit"), edit_admin_product_video_url(@product, video)) %>
+        &nbsp;
+        <%= link_to_delete video, {:url => admin_product_video_url(@product, video) }%>
+      </td>
+    </tr>
+  <% end %>
+
+  <% @product.variants.each do |variant| %>
+    <% variant.videos.each do |video| %>
+      <tr id="<%= dom_id(video) %>">
+        <td><%= link_to video.attachment_file_name, video.attachment.url(:product) %></td>
+        <% if @product.has_variants? %>
+          <td><%= variant.options_text %></td>
+        <% end %>
+        <td><%= video.alt %></td>
+        <td class="actions">
+          <%= link_to_with_icon('edit', t("edit"), edit_admin_product_video_url(@product, video)) %>
+          &nbsp;
+          <%= link_to_delete video, {:url => admin_product_video_url(@product, video) }%>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+</table>
+
+<div id="videos"></div>
+<br/>
+<p>
+    <%= link_to icon('add') + ' ' + t("new_video"), new_admin_product_video_url(@product), :id => "new_video_link" %>
+</p>
+
+<% content_for :head do %>
+  <script type="text/javascript">
+    jQuery(document).ready(function(){
+
+      jQuery('#new_video_link').click(function (event) {
+        event.preventDefault();
+        jQuery(this).hide();
+        jQuery.ajax({type: 'GET', url: this.href, data: ({authenticity_token: AUTH_TOKEN}), success: function(r){ jQuery('#videos').html(r);} });
+      });
+
+    });
+  </script>
+<% end %>
