@@ -1,0 +1,5 @@
+<% if url_options_authenticate?(:controller => 'admin/videos') %>
+  <li <%= ' class="active"' if current == t("videos") %>>
+  <%= link_to t("videos"), admin_product_videos_url(@product) %>
+</li>
+<% end %>
